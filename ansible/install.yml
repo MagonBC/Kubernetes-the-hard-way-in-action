@@ -1,0 +1,10 @@
+---
+- hosts: masters,workers
+  roles:
+    - name: cri_o
+      tags: crio
+
+- hosts: masters
+  roles:
+    - name: kubeadm
+      tags: kubeadm

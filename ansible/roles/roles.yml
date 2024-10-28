@@ -1,0 +1,4 @@
+roles:
+  - name: cri_o
+    src: git+https://github.com/alvistack/ansible-role-cri_o.git
+    version: 5.4.0

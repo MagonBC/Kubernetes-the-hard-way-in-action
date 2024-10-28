@@ -1,0 +1,4 @@
+---
+
+kube_release: "1.30"
+cri_o_version: "1.30.6"

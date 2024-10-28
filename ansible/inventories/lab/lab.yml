@@ -1,0 +1,9 @@
+[masters]
+master.lab.local
+
+[workers]
+worker.lab.local
+
+[lab]
+master.lab.local
+worker.lab.local
