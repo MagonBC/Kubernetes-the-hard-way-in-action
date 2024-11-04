@@ -64,5 +64,7 @@ Deploy the lab
 $ cd ansible
 $ make prepare
 $ ansible-playbook -i inventories/lab install.yml 
+$ kubeadm token create --print-join-command # on master
+$ kubeadm join 192.168.56.1:6443 --token y2hoim.yng8ms8ysox4ibln --discovery-token-ca-cert-hash sha256:21b7d76...f0fc # on worker
 ```
 

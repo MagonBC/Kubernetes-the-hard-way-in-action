@@ -109,6 +109,7 @@
     state: restarted
     enabled: true
     daemon_reload: yes
+  ignore_errors: true  # some config files are not present, they will be created by command: kubeadm init|join
 
 # Stop kubelet and do kubeadm init
 - name: CHECK 1 - is control-plane already initialized ?
