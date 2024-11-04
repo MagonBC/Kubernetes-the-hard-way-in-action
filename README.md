@@ -48,9 +48,21 @@ Every filled preflight requirement is a step, on the hard way, to get your Kuber
 
 The minimal resources
 =====================
-A minimal cluster to setup could be:
+A minimal lab could be:
 
 ![img.png](minimal_cluster.png)
 
-1. The control plane is installed on a 8GB memory/Intel-i5 CPU laptop
-2. The worker is installed on a Virtualbox VM. The VM must have two NICs as described. One for local connexion and a NAT to connect to Internet (docker registry ...)
+1. The control plane is installed on a 8GB memory/Intel-i5 CPU laptop (Opensuse LEAP 15.5)
+2. The worker is installed on a Virtualbox VM (Rocky 9). 
+
+The VM must have two NICs as described. One for local connexion and a NAT to connect to Internet (docker registry ...)
+
+Deploy the lab
+==============
+
+```
+$ cd ansible
+$ make prepare
+$ ansible-playbook -i inventories/lab install.yml 
+```
+
