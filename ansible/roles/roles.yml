@@ -2,3 +2,12 @@ roles:
   - name: cri_o
     src: git+https://github.com/alvistack/ansible-role-cri_o.git
     version: 5.4.0
+  - name: runc
+    src: https://github.com/alvistack/ansible-role-runc
+    version: 10.4.3
+  - name: containers_common
+    src: https://github.com/alvistack/ansible-role-containers_common
+    version: 10.4.3
+  - name: cni
+    src: https://github.com/magonbc/ansible-role-cni-plugins
+    version: main

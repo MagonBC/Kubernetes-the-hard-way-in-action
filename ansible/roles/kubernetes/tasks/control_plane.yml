@@ -1,0 +1,48 @@
+---
+- name: Stop kubelet service
+  systemd:
+    name: kubelet
+    state: stopped
+
+- name: CHECK 2 - Doing dry run
+  command: "{{ kubernetes_kubeadm_init_command }} --dry-run"
+  register: dry_run_output
+
+- name: Initialize the control-plane
+  command: "{{ kubernetes_kubeadm_init_command }}"
+  register: cluster_init_output
+
+- debug:
+    msg: "{{ cluster_init_output.stdout_lines }}"
+
+- name: Copy cluster admin-config to normal user {{ kubernetes_kube_user }}
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ kubernetes_kube_home }}/.kube/config"
+    remote_src: yes
+    owner: "{{ kubernetes_kube_user }}"
+    group: "{{ kubernetes_kube_group }}"
+    mode: 600
+
+- name: export KUBECONFIG for root
+  lineinfile:
+    path: /root/.bash_profile
+    insertafter: "EOF"
+    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+
+- name: Create Calico etc dir
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/calico
+
+- name: Get calico manifest
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/{{ calico_manifest_version }}/manifests/calico.yaml
+    dest: /etc/calico/
+
+- name: Deploy the Calico overlay
+  command: kubectl apply -f /etc/calico/calico.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

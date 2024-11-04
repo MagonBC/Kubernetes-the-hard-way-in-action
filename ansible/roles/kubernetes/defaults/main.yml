@@ -1,0 +1,13 @@
+---
+# defaults file for kubernetes
+kubernetes_kube_user: kube
+kubernetes_kube_group: kube
+kubernetes_kube_version: "{{ kube_release }}"
+kubernetes_calico_version: v3.28.0
+kubernetes_kube_arch: amd64
+kubernetes_kube_os: linux
+kubernetes_kube_home: /app/kube
+kubernetes_kube_bin_dir: /usr/local
+
+kubernetes_kubeadm_init_command: "kubeadm init --apiserver-advertise-address {{ kubernetes_api_server_advertise_ip }} \
+ --service-dns-domain {{ Kubernetes_cluster_dns_domain }}"

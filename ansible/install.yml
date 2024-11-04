@@ -1,10 +1,19 @@
 ---
 - hosts: masters,workers
   roles:
+    - name: runc
+      tags: runc
+    - name: containers_common
+      tags: containers_common
     - name: cri_o
       tags: crio
 
 - hosts: masters
   roles:
-    - name: kubeadm
-      tags: kubeadm
+    - name: cni
+      tags: cni
+
+- hosts: masters,workers
+  roles:
+    - name: kubernetes
+      tags: kubernetes

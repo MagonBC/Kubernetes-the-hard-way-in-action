@@ -1,0 +1,122 @@
+---
+# tasks file for kubernetes
+- name: "Preflight - Fail if target host is not stable for this Role."
+  fail:
+    msg: "This role is not stable for the target operating system, {{ ansible_os_family }}."
+  when: (ansible_os_family != "RedHat") and (ansible_os_family != "Suse")
+
+- name: Create kube group
+  group:
+    name: "{{ kubernetes_kube_group }}"
+    state: present
+
+- name: Create kube user
+  user:
+    name: "{{ kubernetes_kube_user }}"
+    group: "{{ kubernetes_kube_group }}"
+    shell: /bin/bash
+    comment: Kube Admin
+    state: present
+    create_home: true
+    home: "{{ kubernetes_kube_home }}"
+
+- name: Create Kubernetes common Config dir
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/kubernetes
+    - /etc/kubernetes/manifests
+
+- name: Create Kubernetes pki Config dir for control plane
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/kubernetes/pki
+    - /etc/kubernetes/pki/etcd
+  when: 'kubernetes_role == "control_plane"'
+
+- name: Create App kube subdirs
+  file:
+    path: "{{ kubernetes_kube_home }}/{{ item }}"
+    owner: "{{ kubernetes_kube_user }}"
+    group: "{{ kubernetes_kube_group }}"
+    state: directory
+  loop:
+    - examples
+    - .kube
+
+- name: Get kube binaries
+  get_url:
+    url: "https://dl.k8s.io/v{{ kubernetes_kube_version }}/bin/{{ kubernetes_kube_os }}/{{ kubernetes_kube_arch }}/{{ item }}"
+    dest: "{{ kubernetes_kube_bin_dir }}/bin/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - kubectl
+    - kubelet
+
+- name: Get kube (root only) binaries
+  get_url:
+    url: "https://dl.k8s.io/v{{ kubernetes_kube_version }}/bin/{{ kubernetes_kube_os }}/{{ kubernetes_kube_arch }}/{{ item }}"
+    dest: "{{ kubernetes_kube_bin_dir }}/sbin/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - kubeadm
+
+- name: Get calicoctl binary
+  get_url:
+    url: "https://github.com/projectcalico/calico/releases/download/{{ kubernetes_calico_version }}/{{ item }}-{{ kubernetes_kube_os }}-{{ kubernetes_kube_arch }}"
+    dest: "{{ kubernetes_kube_bin_dir }}/sbin/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - calicoctl
+  when: 'kubernetes_role == "control_plane"'
+
+- name: Stop firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+- name: Disable swap
+  command: swapoff -a
+
+- name: Put SELinux in permissive mode
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
+  when: 'ansible_os_family == "RedHat"'
+
+## Configure kubelet service
+- name: Deploy config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: 'kubelet.j2', dest: '/etc/default/kubelet' }
+    - { src: 'kubelet.service.j2', dest: '/usr/lib/systemd/system/kubelet.service' }
+
+- name: Start kubelet service
+  systemd:
+    name: kubelet
+    state: restarted
+    enabled: true
+    daemon_reload: yes
+
+# Stop kubelet and do kubeadm init
+- name: CHECK 1 - is control-plane already initialized ?
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: stat_kubeconfig_file
+  when: 'kubernetes_role == "control_plane"'
+
+- name: Kube control-plane init
+  include_tasks: control_plane.yml
+  when: 'kubernetes_role == "control_plane" and not stat_kubeconfig_file.stat.exists'

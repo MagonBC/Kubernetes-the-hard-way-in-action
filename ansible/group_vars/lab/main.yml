@@ -1,0 +1,4 @@
+---
+kubernetes_api_server_advertise_ip: 192.168.56.1
+kubernetes_trust_token: "{{ vault_kubernetes_trust_token }}"
+Kubernetes_cluster_dns_domain: lab.local
