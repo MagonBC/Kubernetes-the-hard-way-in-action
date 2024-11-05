@@ -44,8 +44,14 @@
     group: "{{ kubernetes_kube_group }}"
     state: directory
   loop:
-    - examples
     - .kube
+
+- name: Copy Manifests example
+  copy:
+    src: "files/examples"
+    dest: "{{ kubernetes_kube_home }}"
+    owner: "{{ kubernetes_kube_user }}"
+    group: "{{ kubernetes_kube_group }}"
 
 - name: Get kube binaries
   get_url:
@@ -121,3 +127,9 @@
 - name: Kube control-plane init
   include_tasks: control_plane.yml
   when: 'kubernetes_role == "control_plane" and not stat_kubeconfig_file.stat.exists'
+
+- name: Install helm package manager for Kubernetes
+  shell: | 
+     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+     helm completion bash > /etc/bash_completion.d/helm
+  when: 'kubernetes_role == "control_plane"'

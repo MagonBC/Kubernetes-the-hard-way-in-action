@@ -10,4 +10,4 @@ roles:
     version: 10.4.3
   - name: cni
     src: https://github.com/magonbc/ansible-role-cni-plugins
-    version: main
+    version: kube_lab_quick_fix
