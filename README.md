@@ -68,3 +68,47 @@ $ kubeadm token create --print-join-command # on master
 $ kubeadm join 192.168.56.1:6443 --token y2hoim.yng8ms8ysox4ibln --discovery-token-ca-cert-hash sha256:21b7d76...f0fc # on worker
 ```
 
+Troubleshooting
+===============
+
+If you don't have a lot of resources in your PC like me, non kube-system pods will most probably be hard evicted:
+You can work around this by updating hard eviction thresholds in /var/lib/kubelet/config.yaml like this:
+
+```
+# default: 15%, 100Mi, 10%, 5%
+evictionHard:
+  imagefs.available: 5%    
+  memory.available: 20Mi
+  nodefs.available: 5%
+  nodefs.inodesFree: 5%
+```
+
+Reference: https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/
+
+Examples
+========
+
+Debug DNS Resolution
+--------------------
+
+A tutorial on how to create a dnsutils Pod and begin manipulating CoreDNS name resolution: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/
+
+Install a local Nginx
+---------------------
+
+A kubernetes service has by default a cluster IP allowing it to be accessed from all pods inside a cluster.
+
+The manifest [nginx.yaml](https://github.com/MagonBC/kubernetes-the-hard-way-quickflight/blob/main/ansible/roles/kubernetes/files/examples/nginx.yaml) show how to setup an Nginx server and externalise it
+using a kube service:
+
+```
+$ su - kube
+kube@master:~> kubectl apply -f examples/nginx.yaml
+kube@master:~> kubectl get services -o wide
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+kubernetes   ClusterIP   10.96.0.1        <none>        443/TCP    24h   <none>
+nginx-svc    ClusterIP   10.110.126.201   <none>        8080/TCP   42m   app=nginx
+kube@master:~> nc -vz 10.110.126.201 8080
+Connection to 10.110.126.201 8080 port [tcp/http-alt] succeeded!
+```
+
