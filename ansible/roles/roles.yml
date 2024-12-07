@@ -1,13 +1,13 @@
 roles:
   - name: cri_o
-    src: git+https://github.com/alvistack/ansible-role-cri_o.git
-    version: 5.4.0
+    src: https://github.com/magonbc/ansible-role-cri_o
+    version: kube_lab_quick_fix
   - name: runc
-    src: https://github.com/alvistack/ansible-role-runc
-    version: 10.4.3
+    src: https://github.com/magonbc/ansible-role-runc
+    version: kube_lab_quick_fix
   - name: containers_common
-    src: https://github.com/alvistack/ansible-role-containers_common
-    version: 10.4.3
+    src: https://github.com/magonbc/ansible-role-containers_common
+    version: kube_lab_quick_fix
   - name: cni
     src: https://github.com/magonbc/ansible-role-cni-plugins
     version: kube_lab_quick_fix
