@@ -11,3 +11,9 @@ roles:
   - name: cni
     src: https://github.com/magonbc/ansible-role-cni-plugins
     version: kube_lab_quick_fix
+  - name: keepalived
+    src: https://github.com/MagonBC/ansible-role-keepalived
+    version: kube_lab_quick_fix
+  - name: haproxy
+    src: https://github.com/MagonBC/ansible-role-haproxy
+    version: kube_lab_quick_fix

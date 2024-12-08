@@ -1,0 +1,4 @@
+---
+kubernetes_role: control_plane
+calico_manifest_version: "v3.29.0"
+kubernetes_kubeadm_init_command: ""

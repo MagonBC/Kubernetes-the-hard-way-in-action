@@ -3,3 +3,5 @@ cri_o
 runc
 cni
 containers_common
+haproxy
+keepalived

@@ -1,0 +1,26 @@
+---
+- hosts: masters_ep,workers
+  roles:
+    - name: runc
+      tags: runc
+    - name: containers_common
+      tags: containers_common
+    - name: cri_o
+      tags: crio
+
+- hosts: masters_ep
+  roles:
+    - name: cni
+      tags: cni
+
+- hosts: loadbalancer
+  roles:
+    - name: keepalived
+      tags: keepalived
+    - name: haproxy
+      tags: haproxy
+
+- hosts: masters_ep,workers
+  roles:
+    - name: kubernetes
+      tags: kubernetes

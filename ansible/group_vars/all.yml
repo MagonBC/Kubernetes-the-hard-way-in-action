@@ -5,3 +5,21 @@ kube_release: "1.31"
 kubernetes_kube_version: "1.31.1"
 cri_o_version: "1.30.6"
 cni_plugins_version: '1.5.1'
+
+cni_plugins_config_files:
+  - filename: '10-crio-bridge.conflist'
+    content:
+      cniVersion: 0.3.1
+      name: crio
+      type: bridge
+      bridge: cni0
+      isGateway: true
+      ipMasq: true
+      hairpinMode: true
+      ipam:
+        type: host-local
+        routes:
+          - dst: 0.0.0.0/0
+        ranges:
+          - - subnet: 10.85.0.0/16
+              gateway: 10.85.0.1

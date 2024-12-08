@@ -1,0 +1,14 @@
+[masters_ep]
+master.lab.local
+
+[masters]
+
+[workers]
+worker.lab.local
+
+[loadbalancer]
+master.lab.local
+
+[lab]
+master.lab.local
+worker.lab.local

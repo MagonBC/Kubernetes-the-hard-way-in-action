@@ -112,3 +112,11 @@ kube@master:~> nc -vz 10.110.126.201 8080
 Connection to 10.110.126.201 8080 port [tcp/http-alt] succeeded!
 ```
 
+Testing High Availability
+=========================
+
+We can extend this lab to test [HA feature](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/). But we need to add some additional node VMs and install a load balancer. We can use the second
+[inventory/ha](https://github.com/MagonBC/kubernetes-the-hard-way-quickflight/tree/main/ansible/inventories/ha) and the 
+[install_ha](https://github.com/MagonBC/kubernetes-the-hard-way-quickflight/blob/main/ansible/install_ha.yml) script to achieve this goal !
+
+Nice !

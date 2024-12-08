@@ -1,0 +1,31 @@
+---
+# Reference -> https://github.com/kubernetes/kubeadm/blob/main/docs/ha-considerations.md#options-for-software-load-balancing
+# Keepalived
+keepalived_virtual_ip_address: 192.168.33.100
+keepalived_unicast_peers:
+  - 192.168.56.1
+
+# put your wlan interface name / IP here:
+keepalived_unicast_src_ip: 192.168.1.28
+keepalived_interface: wlan0
+
+keepalived_activate_script: true
+keepalived_enable_process_tracking: false
+keepalived_script_name: check_apiserver
+keepalived_script_command: /etc/keepalived/check_apiserver.sh
+keepalived_weight: -2
+keepalived_interval: 3
+keepalived_fall: 10
+keepalived_rise: 2
+
+# HA-Proxy
+haproxy_frontend_port: 8443
+
+haproxy_backend_servers:
+- name: master00
+  address: 192.168.56.1:6443
+
+haproxy_frontend_mode: tcp
+haproxy_backend_name: kube_habackend
+haproxy_backend_mode: tcp
+haproxy_backend_httpchk: ""
