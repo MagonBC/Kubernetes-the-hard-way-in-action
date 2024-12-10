@@ -7,7 +7,7 @@ master.lab.local
 worker.lab.local
 
 [loadbalancer]
-master.lab.local
+lb.lab.local
 
 [lab]
 master.lab.local
